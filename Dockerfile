@@ -1,6 +1,4 @@
-FROM node:lts-alpine
-
-RUN apk add --no-cache alpine-sdk python3 py3-pip make g++
+FROM niradler/project-base
 
 WORKDIR /usr/src/app
 

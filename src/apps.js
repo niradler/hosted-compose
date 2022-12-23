@@ -21,11 +21,25 @@ export class Apps {
     }
   }
 
+  execCompose(fn, args, options) {
+    return compose[fn](...args, options);
+  }
+
+  async runCompose({ name, fn, args }, options = {}) {
+    const appDir = Path.join(this.rootDir, name);
+    await this.execCompose(fn, args, {
+      ...options,
+      cwd: appDir,
+      log: true,
+    });
+  }
+
   async create({ name, config, env }) {
     const appDir = Path.join(this.rootDir, name);
     await fs.mkdir(appDir, { recursive: true });
+    const fileName = "docker-compose.json";
     await fs.writeFile(
-      Path.join(appDir, "docker-compose.json"),
+      Path.join(appDir, fileName),
       JSON.stringify(config, null, 2)
     );
     if (env && Object.keys(env).length > 0) {
@@ -36,19 +50,12 @@ export class Apps {
           .join("\n")
       );
     }
-    await compose
-      .upAll({
-        cwd: appDir,
-        log: true,
-      })
-      .then(
-        () => {
-          console.log("Created");
-        },
-        (err) => {
-          console.log("something went wrong:", err.message);
-        }
-      );
+    await compose.upAll({
+      cwd: appDir,
+      log: true,
+    });
+
+    console.log("Created");
   }
 
   async remove({ name }) {
@@ -61,6 +68,22 @@ export class Apps {
 
     await fs.remove(appDir);
     console.log("Removed");
+  }
+
+  async exec({ name, container, cmd }) {
+    const appDir = Path.join(this.rootDir, name);
+    await compose.exec(container, cmd, {
+      cwd: appDir,
+      log: true,
+    });
+  }
+
+  async logs({ name, service, cmd }) {
+    const appDir = Path.join(this.rootDir, name);
+    await compose.exec(service, cmd, {
+      cwd: appDir,
+      log: true,
+    });
   }
 }
 
