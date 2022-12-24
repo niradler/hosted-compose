@@ -390,6 +390,11 @@ yargs(hideBin(process.argv))
           default: "yaml",
           description: "yaml/yml/json",
         })
+        .option("composeOptions", {
+          type: "array",
+          default: [],
+          description: "compose options",
+        })
         .option("name", {
           description: "app name",
           required: true,
@@ -409,6 +414,7 @@ yargs(hideBin(process.argv))
       ]);
 
       await apps.create({
+        composeOptions: argv.composeOptions,
         configType: argv.configType,
         config: config,
         name: argv.name,

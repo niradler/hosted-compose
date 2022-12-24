@@ -3,7 +3,7 @@ import Path from "path";
 import YAML from "yaml";
 // import compose from "./compose.js";
 import compose from "docker-compose";
-import { toFilePath } from "./utils.js";
+import { toFilePath, fileExists, sleep } from "./utils.js";
 
 export class Apps {
   constructor({ rootDir, verbose }) {
@@ -56,25 +56,59 @@ export class Apps {
     return Path.join(toFilePath(this.rootDir), name);
   }
 
-  async create({ name, config, configType, env }) {
+  async create({ name, config, configType, composeOptions, env }) {
     const appDir = this.appPath(name);
+
     await fs.mkdir(appDir, { recursive: true });
+    this.logger("app folder created", appDir);
     const fileName = `docker-compose.${configType}`;
-    await fs.writeFile(Path.join(appDir, fileName), config);
+    const composeFilePath = Path.join(appDir, fileName);
+    const hasCompose = await fileExists(composeFilePath);
+    if (hasCompose) throw new Error("Already exists: compose file");
+    await fs.writeFile(composeFilePath, config);
+    this.logger("docker-compose file created", fileName);
+
     if (env && Object.keys(env).length > 0) {
+      const envFilePath = Path.join(appDir, ".env");
+      const hasEnv = await fileExists(envFilePath);
+      if (hasEnv) throw new Error("Already exists: env file");
+
       await fs.writeFile(
-        Path.join(appDir, ".env"),
+        envFilePath,
         Object.keys(env)
           .map((key) => `${key}=${env[key]}`)
           .join("\n")
       );
+      this.logger(".env file created", env);
     }
 
-    await this.runCompose({
-      name,
-      fn: "upAll",
-      args: [],
-    });
+    await fs.writeFile(
+      Path.join(appDir, "config.json"),
+      JSON.stringify(
+        {
+          name,
+          config,
+          configType,
+          composeOptions,
+          env,
+          appDir,
+          composeFile: fileName,
+        },
+        null,
+        2
+      )
+    );
+
+    await this.runCompose(
+      {
+        name,
+        fn: "upAll",
+        args: [],
+      },
+      {
+        composeOptions: ["-f", fileName, ...composeOptions],
+      }
+    );
 
     console.log("Created");
   }
