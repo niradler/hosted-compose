@@ -11,6 +11,10 @@ export class Apps {
     this.verbose = verbose || false;
   }
 
+  logger(...args) {
+    if (this.verbose) console.log("[Logger]", ...args);
+  }
+
   static parseConfig(config, configType = "yaml") {
     switch (configType) {
       case "yaml":
@@ -25,35 +29,38 @@ export class Apps {
 
   execCompose(fn, args, options) {
     if (!compose[fn]) throw new Error("Unsupported compose function");
-    console.log({ fn, args, options });
-    return compose[fn](...args, options);
+    this.logger({ fn, args, options });
+    return new Promise((resolve, reject) => {
+      compose[fn](...args, options).then(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          console.error("Something went wrong", err.message);
+          reject(err.message);
+        }
+      );
+    });
   }
 
   async runCompose({ name, fn, args }, options = {}) {
-    try {
-      const appDir = this.appPath(name);
-      await this.execCompose(fn, args, {
-        ...options,
-        cwd: appDir,
-        log: true,
-      });
-    } catch (error) {
-      console.error(error.message);
-    }
+    const appDir = this.appPath(name);
+    await this.execCompose(fn, args, {
+      ...options,
+      cwd: appDir,
+      log: true,
+    });
   }
 
   appPath(name) {
     return Path.join(toFilePath(this.rootDir), name);
   }
 
-  async create({ name, config, env }) {
+  async create({ name, config, configType, env }) {
     const appDir = this.appPath(name);
     await fs.mkdir(appDir, { recursive: true });
-    const fileName = "docker-compose.json";
-    await fs.writeFile(
-      Path.join(appDir, fileName),
-      JSON.stringify(config, null, 2)
-    );
+    const fileName = `docker-compose.${configType}`;
+    await fs.writeFile(Path.join(appDir, fileName), config);
     if (env && Object.keys(env).length > 0) {
       await fs.writeFile(
         Path.join(appDir, ".env"),

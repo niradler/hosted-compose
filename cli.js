@@ -265,6 +265,58 @@ yargs(hideBin(process.argv))
     }
   )
   .command(
+    "list",
+    "list services",
+    (yargs) => {
+      return yargs
+        .option("rootDir", {
+          default: process.cwd(),
+          description: "apps root directory",
+        })
+        .option("name", {
+          description: "app name",
+          required: true,
+        });
+    },
+    async (argv) => {
+      if (argv.verbose) console.debug(argv);
+
+      const apps = new Apps(argv);
+
+      await apps.runCompose({
+        name: argv.name,
+        fn: "configServices",
+        args: [],
+      });
+    }
+  )
+  .command(
+    "pull",
+    "pull app images",
+    (yargs) => {
+      return yargs
+        .option("rootDir", {
+          default: process.cwd(),
+          description: "apps root directory",
+        })
+        .option("name", {
+          description: "app name",
+          required: true,
+        });
+    },
+    async (argv) => {
+      if (argv.verbose) console.debug(argv);
+
+      const apps = new Apps(argv);
+
+      await apps.runCompose({
+        name: argv.name,
+        fn: "pullAll",
+        args: [],
+      });
+    }
+  )
+  .command(
     "upgrade",
     "upgrade app",
     (yargs) => {
@@ -289,7 +341,7 @@ yargs(hideBin(process.argv))
       });
       await apps.runCompose({
         name: argv.name,
-        fn: "pull",
+        fn: "pullAll",
         args: [],
       });
       await apps.runCompose(
@@ -357,7 +409,8 @@ yargs(hideBin(process.argv))
       ]);
 
       await apps.create({
-        config: Apps.parseConfig(config, argv.configType),
+        configType: argv.configType,
+        config: config,
         name: argv.name,
         env: await getEnv(),
       });
