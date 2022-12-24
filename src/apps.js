@@ -1,7 +1,9 @@
 import fs from "fs-extra";
 import Path from "path";
 import YAML from "yaml";
+// import compose from "./compose.js";
 import compose from "docker-compose";
+import { toFilePath } from "./utils.js";
 
 export class Apps {
   constructor({ rootDir, verbose }) {
@@ -22,20 +24,30 @@ export class Apps {
   }
 
   execCompose(fn, args, options) {
+    if (!compose[fn]) throw new Error("Unsupported compose function");
+    console.log({ fn, args, options });
     return compose[fn](...args, options);
   }
 
   async runCompose({ name, fn, args }, options = {}) {
-    const appDir = Path.join(this.rootDir, name);
-    await this.execCompose(fn, args, {
-      ...options,
-      cwd: appDir,
-      log: true,
-    });
+    try {
+      const appDir = this.appPath(name);
+      await this.execCompose(fn, args, {
+        ...options,
+        cwd: appDir,
+        log: true,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  appPath(name) {
+    return Path.join(toFilePath(this.rootDir), name);
   }
 
   async create({ name, config, env }) {
-    const appDir = Path.join(this.rootDir, name);
+    const appDir = this.appPath(name);
     await fs.mkdir(appDir, { recursive: true });
     const fileName = "docker-compose.json";
     await fs.writeFile(
@@ -50,40 +62,27 @@ export class Apps {
           .join("\n")
       );
     }
-    await compose.upAll({
-      cwd: appDir,
-      log: true,
+
+    await this.runCompose({
+      name,
+      fn: "upAll",
+      args: [],
     });
 
     console.log("Created");
   }
 
   async remove({ name }) {
-    const appDir = Path.join(this.rootDir, name);
+    const appDir = this.appPath(name);
 
-    await compose.down({
-      cwd: appDir,
-      log: true,
+    await this.runCompose({
+      name,
+      fn: "down",
+      args: [],
     });
 
     await fs.remove(appDir);
     console.log("Removed");
-  }
-
-  async exec({ name, container, cmd }) {
-    const appDir = Path.join(this.rootDir, name);
-    await compose.exec(container, cmd, {
-      cwd: appDir,
-      log: true,
-    });
-  }
-
-  async logs({ name, service, cmd }) {
-    const appDir = Path.join(this.rootDir, name);
-    await compose.exec(service, cmd, {
-      cwd: appDir,
-      log: true,
-    });
   }
 }
 

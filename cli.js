@@ -142,7 +142,7 @@ yargs(hideBin(process.argv))
       const apps = new Apps(argv);
       await apps.runCompose({
         name: argv.name,
-        fn: "up",
+        fn: "upAll",
         args: [],
       });
     }
@@ -257,7 +257,11 @@ yargs(hideBin(process.argv))
       if (argv.verbose) console.debug(argv);
 
       const apps = new Apps(argv);
-      await apps.exec(argv);
+      await apps.runCompose({
+        name: argv.name,
+        fn: "exec",
+        args: [argv.service, argv.cmd],
+      });
     }
   )
   .command(
