@@ -1,9 +1,8 @@
 import fs from "fs-extra";
 import Path from "path";
 import YAML from "yaml";
-// import compose from "./compose.js";
 import compose from "docker-compose";
-import { toFilePath, fileExists, sleep } from "./utils.js";
+import { toFilePath, fileExists } from "../utils.js";
 
 export class Apps {
   constructor({ rootDir, verbose }) {
@@ -27,7 +26,7 @@ export class Apps {
     }
   }
 
-  execCompose(fn, args, options) {
+  execCompose(fn, args = [], options) {
     if (!compose[fn]) throw new Error("Unsupported compose function");
     this.logger({ fn, args, options });
     return new Promise((resolve, reject) => {
@@ -116,11 +115,16 @@ export class Apps {
   async remove({ name }) {
     const appDir = this.appPath(name);
 
-    await this.runCompose({
-      name,
-      fn: "down",
-      args: [],
-    });
+    await this.runCompose(
+      {
+        name,
+        fn: "down",
+        args: [],
+      },
+      {
+        composeOptions: ["--rmi", "all"],
+      }
+    );
 
     await fs.remove(appDir);
     console.log("Removed");

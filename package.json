@@ -1,6 +1,6 @@
 {
   "name": "self-hosted-app-compose",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "type": "module",
   "main": "index.js",
@@ -16,9 +16,18 @@
   "dependencies": {
     "docker-compose": "^0.23.17",
     "dockerode": "^3.3.4",
+    "dotenv": "^16.0.3",
     "fs-extra": "^11.1.0",
+    "handlebars": "^4.7.7",
     "inquirer": "^9.1.4",
+    "node-ssh": "^13.0.0",
+    "ssh-config": "^4.1.6",
+    "ssh2": "^1.11.0",
     "yaml": "^2.2.0",
-    "yargs": "^17.6.2"
+    "yargs": "^17.6.2",
+    "zx": "^7.1.1"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }

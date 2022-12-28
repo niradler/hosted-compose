@@ -1,5 +1,5 @@
 import Docker from "dockerode";
-const isWin = process.platform === "win32";
+import { isWin } from "../utils.js";
 let socketPath = isWin ? "//./pipe/docker_engine" : "/var/run/docker.sock";
 socketPath = process.env.DOCKER_SOCKET_PATH || socketPath;
 
