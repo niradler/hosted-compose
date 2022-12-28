@@ -1,3 +1,4 @@
+import inquirer from "inquirer";
 import Apps from "../lib/apps.js";
 
 export default function (parentCommand) {
