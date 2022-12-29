@@ -8,7 +8,7 @@
     "hosted-compose": "cli.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "release": "git add . && git commit -am \"Release\" && npm version patch && npm publish && git push --tags"
   },
   "keywords": [],
   "author": "",
