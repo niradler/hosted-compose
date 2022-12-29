@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
 import Apps from "../lib/apps.js";
+import { getEnv } from "../utils.js";
 
 export default function (parentCommand) {
   parentCommand

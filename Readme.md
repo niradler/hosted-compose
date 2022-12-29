@@ -1,17 +1,22 @@
-# self hosted app management
+# hosted-compose
 
-easy way to manage your self hosted server base on docker and docker-compose.
+easy way to manage your self hosted server
+
+- docker management (local/remote)
+- docker-compose (apps) (local/remote)
+- ssh utils
+- zx scripts
 
 ## Usage
 
 ```sh
-npm i -g self-hosted-app-compose
+npm i -g hosted-compose
 ```
 
 create your first app:
 
 ```sh
-app-compose create --name mongo --root-dir ./apps
+hosted-compose apps create --name mongo --root-dir ./apps
 ```
 
 example config:
@@ -34,11 +39,11 @@ services:
 remove app:
 
 ```sh
-app-compose remove --name mongo --root-dir ./apps
+hosted-compose apps remove --name mongo --root-dir ./apps
 ```
 
 for the complete command list:
 
 ```sh
-app-compose --help
+hosted-compose --help
 ```

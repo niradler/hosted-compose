@@ -1,11 +1,12 @@
 {
-  "name": "self-hosted-app-compose",
+  "name": "hosted-compose",
   "version": "0.0.5",
-  "description": "",
+  "description": "easy way to manage your self hosted server base on docker, docker-compose and others.",
   "type": "module",
   "main": "index.js",
   "bin": {
-    "app-compose": "./cli.js"
+    "app-compose": "cli.js",
+    "hosted-compose": "cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -29,5 +30,13 @@
   },
   "devDependencies": {
     "jest": "^29.3.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niradler/self-hosted-app-compose.git"
+  },
+  "bugs": {
+    "url": "https://github.com/niradler/self-hosted-app-compose/issues"
+  },
+  "homepage": "https://github.com/niradler/self-hosted-app-compose#readme"
 }
