@@ -33,7 +33,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -63,7 +63,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -93,7 +93,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -123,7 +123,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -154,7 +154,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -192,7 +192,7 @@ export default function (parentCommand) {
             args: [argv.service, argv.cmd],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -222,7 +222,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -260,7 +260,7 @@ export default function (parentCommand) {
             args: [argv.service, argv.cmd],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -291,7 +291,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -322,7 +322,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: argv.composeOptions,
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -352,14 +352,9 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: [...argv.composeOptions],
+            commandOptions: [["--rmi", "all"], ...argv.commandOptions],
           }
         );
-        await apps.runCompose({
-          name: argv.name,
-          fn: "pullAll",
-          args: [],
-        });
         await apps.runCompose(
           {
             name: argv.name,
@@ -367,7 +362,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
-            composeOptions: [...argv.composeOptions],
+            commandOptions: argv.commandOptions,
           }
         );
       }
@@ -425,7 +420,7 @@ export default function (parentCommand) {
         ]);
 
         await apps.create({
-          composeOptions: argv.composeOptions,
+          commandOptions: argv.commandOptions,
           configType: argv.configType,
           config: config,
           name: argv.name,
@@ -433,10 +428,10 @@ export default function (parentCommand) {
         });
       }
     )
-    .option("composeOptions", {
+    .option("commandOptions", {
       alias: "co",
       type: "array",
       default: [],
-      description: "compose options",
+      description: "compose command options",
     });
 }

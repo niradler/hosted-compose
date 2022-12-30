@@ -54,7 +54,14 @@ export class Apps {
     return Path.join(toFilePath(this.rootDir), name);
   }
 
-  async create({ name, config, configType, composeOptions, env }) {
+  async create({
+    name,
+    config,
+    configType,
+    commandOptions,
+    composeOptions,
+    env,
+  }) {
     const appDir = this.appPath(name);
 
     await fs.mkdir(appDir, { recursive: true });
@@ -88,6 +95,7 @@ export class Apps {
           config,
           configType,
           composeOptions,
+          commandOptions,
           env,
           appDir,
           composeFile: fileName,
@@ -104,14 +112,14 @@ export class Apps {
         args: [],
       },
       {
-        composeOptions: ["-f", fileName, ...composeOptions],
+        commandOptions: [...commandOptions],
       }
     );
 
     console.log("Created");
   }
 
-  async remove({ name, composeOptions }) {
+  async remove({ name, commandOptions }) {
     const appDir = this.appPath(name);
 
     await this.runCompose(
@@ -121,7 +129,7 @@ export class Apps {
         args: [],
       },
       {
-        composeOptions: [...composeOptions], // ["--rmi", "all"]
+        commandOptions: [["--rmi", "all"], ...commandOptions],
       }
     );
 
