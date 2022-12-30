@@ -1,6 +1,8 @@
 import Path from "path";
 import fs from "fs-extra";
 import inquirer from "inquirer";
+import os from "os";
+import SSHConfig from "ssh-config";
 
 export const toFilePath = (path, root = process.cwd()) => {
   if (!path) return;
@@ -53,3 +55,38 @@ export const getEnv = async () => {
 };
 
 export const isWin = process.platform === "win32";
+
+const secureAccess = (value) => (value ? value : {});
+
+export const sshConfiguration = async (argv) => {
+  try {
+    const config = SSHConfig.parse(
+      await fs.readFile(Path.join(os.homedir(), argv.config), "ascii")
+    );
+    const hostConfig = config.find((c) => c.value === argv.host);
+    if (!hostConfig) throw new Error("Host configuration not found");
+
+    return {
+      ...argv,
+      host: secureAccess(hostConfig.config.find((c) => c.param === "HostName"))
+        .value,
+      username: secureAccess(hostConfig.config.find((c) => c.param === "User"))
+        .value,
+      privateKeyPath: secureAccess(
+        hostConfig.config.find((c) => c.param === "IdentityFile")
+      ).value,
+      port: secureAccess(hostConfig.config.find((c) => c.param === "Port"))
+        .value,
+    };
+  } catch (error) {
+    logger(argv.verbose)("ssh parse config error:", error.message);
+  }
+
+  return argv;
+};
+
+export const logger = (verbose = false) => {
+  return (...args) => {
+    if (verbose) console.log("[Logger]", ...args);
+  };
+};

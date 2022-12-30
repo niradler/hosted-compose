@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import Path from "path";
 import YAML from "yaml";
 import compose from "docker-compose";
-import { toFilePath, fileExists } from "../utils.js";
+import { toFilePath, fileExists, logger } from "../utils.js";
 
 export class Apps {
   constructor({ rootDir, verbose }) {
@@ -10,11 +10,9 @@ export class Apps {
     this.verbose = verbose || false;
   }
 
-  logger(...args) {
-    if (this.verbose) console.log("[Logger]", ...args);
-  }
+  logger = logger(this.verbose);
 
-  static parseConfig(config, configType = "yaml") {
+  static parseConfig(config, configType = "yml") {
     switch (configType) {
       case "yaml":
       case "yml":
@@ -28,7 +26,7 @@ export class Apps {
 
   execCompose(fn, args = [], options) {
     if (!compose[fn]) throw new Error("Unsupported compose function");
-    this.logger({ fn, args, options });
+    this.logger("execCompose", { fn, args, options });
     return new Promise((resolve, reject) => {
       compose[fn](...args, options).then(
         (res) => {
@@ -43,6 +41,7 @@ export class Apps {
   }
 
   async runCompose({ name, fn, args }, options = {}) {
+    this.logger("runCompose", { name, fn, args }, options);
     const appDir = this.appPath(name);
     await this.execCompose(fn, args, {
       ...options,
@@ -112,7 +111,7 @@ export class Apps {
     console.log("Created");
   }
 
-  async remove({ name }) {
+  async remove({ name, composeOptions }) {
     const appDir = this.appPath(name);
 
     await this.runCompose(
@@ -122,7 +121,7 @@ export class Apps {
         args: [],
       },
       {
-        composeOptions: ["--rmi", "all"],
+        composeOptions: [...composeOptions], // ["--rmi", "all"]
       }
     );
 

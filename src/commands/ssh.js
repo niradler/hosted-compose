@@ -1,43 +1,12 @@
-import os from "os";
-import Path from "path";
 import fs from "fs/promises";
 import { NodeSSH } from "node-ssh";
-import { toFilePath } from "../utils.js";
-import SSHConfig from "ssh-config";
+import { toFilePath, sshConfiguration, logger } from "../utils.js";
+
 const ssh = new NodeSSH();
-
-const secureAccess = (value) => (value ? value : {});
-
-const sshConfiguration = async (argv) => {
-  try {
-    const config = SSHConfig.parse(
-      await fs.readFile(Path.join(os.homedir(), argv.config), "ascii")
-    );
-    const hostConfig = config.find((c) => c.value === argv.host);
-    if (!hostConfig) throw new Error("Host configuration not found");
-
-    return {
-      ...argv,
-      host: secureAccess(hostConfig.config.find((c) => c.param === "HostName"))
-        .value,
-      username: secureAccess(hostConfig.config.find((c) => c.param === "User"))
-        .value,
-      privateKeyPath: secureAccess(
-        hostConfig.config.find((c) => c.param === "IdentityFile")
-      ).value,
-      port: secureAccess(hostConfig.config.find((c) => c.param === "Port"))
-        .value,
-    };
-  } catch (error) {
-    if (argv.verbose) console.error("ssh parse config error:", error.message);
-  }
-
-  return argv;
-};
 
 const connect = async (argv) => {
   const config = await sshConfiguration(argv);
-  if (argv.verbose) console.log(config);
+  logger(argv.verbose)(config);
   let { privateKeyPath, port, host, username, password, passphrase } = config;
   let privateKey;
   if (privateKeyPath) {
@@ -51,7 +20,7 @@ const connect = async (argv) => {
     password,
     passphrase,
   });
-  if (argv.verbose) console.log("connected");
+  logger(argv.verbose)("connected");
 };
 
 export default function (parentCommand) {
@@ -71,7 +40,7 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
         try {
           await connect(argv);
           await ssh.getFile(argv.localFilePath, argv.remoteFilePath);
@@ -97,7 +66,7 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
         try {
           await connect(argv);
           await ssh.putFiles([
@@ -119,7 +88,7 @@ export default function (parentCommand) {
         });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
         try {
           await connect(argv);
           const result = await ssh.execCommand(argv.cmd, {});

@@ -4,6 +4,7 @@ import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
 import appsCommand from "./src/commands/apps.js";
 import sshCommand from "./src/commands/ssh.js";
+import dockerCommand from "./src/commands/docker.js";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -14,6 +15,11 @@ yargs(hideBin(process.argv))
     command: "apps",
     description: "Manage docker compose apps",
     builder: (yargs) => appsCommand(yargs),
+  })
+  .command({
+    command: "docker",
+    description: "Manage docker",
+    builder: (yargs) => dockerCommand(yargs),
   })
   .command({
     command: "ssh",

@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import Apps from "../lib/apps.js";
-import { getEnv } from "../utils.js";
+import { getEnv, logger } from "../utils.js";
 
 export default function (parentCommand) {
   parentCommand
@@ -23,14 +23,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "logs",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "logs",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -48,14 +53,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "ps",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "ps",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -73,14 +83,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "down",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "down",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -98,14 +113,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "upAll",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "upAll",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -124,14 +144,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "restartAll",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "restartAll",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -157,14 +182,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "run",
-          args: [argv.service, argv.cmd],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "run",
+            args: [argv.service, argv.cmd],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -182,14 +212,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "stop",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "stop",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -215,14 +250,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "exec",
-          args: [argv.service, argv.cmd],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "exec",
+            args: [argv.service, argv.cmd],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -240,15 +280,20 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
 
-        await apps.runCompose({
-          name: argv.name,
-          fn: "configServices",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "configServices",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -266,15 +311,20 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
 
-        await apps.runCompose({
-          name: argv.name,
-          fn: "pullAll",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "pullAll",
+            args: [],
+          },
+          {
+            composeOptions: argv.composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -292,14 +342,19 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
-        await apps.runCompose({
-          name: argv.name,
-          fn: "stop",
-          args: [],
-        });
+        await apps.runCompose(
+          {
+            name: argv.name,
+            fn: "down",
+            args: [],
+          },
+          {
+            composeOptions: [...argv.composeOptions],
+          }
+        );
         await apps.runCompose({
           name: argv.name,
           fn: "pullAll",
@@ -308,11 +363,11 @@ export default function (parentCommand) {
         await apps.runCompose(
           {
             name: argv.name,
-            fn: "up",
+            fn: "upAll",
             args: [],
           },
           {
-            composeOptions: ["--force-recreate"],
+            composeOptions: [...argv.composeOptions],
           }
         );
       }
@@ -332,7 +387,7 @@ export default function (parentCommand) {
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
         await apps.remove(argv);
@@ -351,18 +406,13 @@ export default function (parentCommand) {
             default: "yaml",
             description: "yaml/yml/json",
           })
-          .option("composeOptions", {
-            type: "array",
-            default: [],
-            description: "compose options",
-          })
           .option("name", {
             description: "app name",
             required: true,
           });
       },
       async (argv) => {
-        if (argv.verbose) console.debug(argv);
+        logger(argv.verbose)(argv);
 
         const apps = new Apps(argv);
 
@@ -382,5 +432,11 @@ export default function (parentCommand) {
           env: await getEnv(),
         });
       }
-    );
+    )
+    .option("composeOptions", {
+      alias: "co",
+      type: "array",
+      default: [],
+      description: "compose options",
+    });
 }
