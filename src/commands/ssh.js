@@ -26,6 +26,66 @@ const connect = async (argv) => {
 export default function (parentCommand) {
   parentCommand
     .command(
+      "getDirectory",
+      "copy folder from destination",
+      (yargs) => {
+        return yargs
+          .option("localPath", {
+            alias: "to",
+            description: "local folder path",
+          })
+          .option("remotePath", {
+            alias: "from",
+            description: "destination folder path",
+          });
+      },
+      async (argv) => {
+        logger(argv.verbose)(argv);
+        try {
+          await connect(argv);
+          const completed = await ssh.getDirectory(
+            argv.localPath,
+            argv.remotePath
+          );
+          if (completed) console.log("Completed");
+          process.exit(0);
+        } catch (error) {
+          console.error("ERROR:", error.message);
+          process.exit(1);
+        }
+      }
+    )
+    .command(
+      "putDirectory",
+      "copy folder to destination",
+      (yargs) => {
+        return yargs
+          .option("localPath", {
+            alias: "to",
+            description: "local folder path",
+          })
+          .option("remotePath", {
+            alias: "from",
+            description: "destination folder path",
+          });
+      },
+      async (argv) => {
+        logger(argv.verbose)(argv);
+        try {
+          await connect(argv);
+          const completed = await ssh.putDirectory(
+            argv.localPath,
+            argv.remotePath
+          );
+          if (completed) console.log("Completed");
+          process.exit(0);
+        } catch (error) {
+          console.error("ERROR:", error.message);
+          process.exit(1);
+        }
+      }
+    )
+    .command(
       "getFile",
       "copy file from destination",
       (yargs) => {

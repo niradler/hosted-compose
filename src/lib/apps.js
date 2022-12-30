@@ -96,7 +96,7 @@ export class Apps {
           configType,
           composeOptions,
           commandOptions,
-          env,
+          envVariables: Object.keys(env),
           appDir,
           composeFile: fileName,
         },
