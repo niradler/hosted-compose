@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 
+import { fileURLToPath } from "url";
+import Path from "path";
 import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
 import appsCommand from "./src/commands/apps.js";
 import sshCommand from "./src/commands/ssh.js";
 import dockerCommand from "./src/commands/docker.js";
+import scriptsCommand from "./src/commands/scripts.js";
 import * as dotenv from "dotenv";
+
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+global.__basedir = Path.parse(__filename).dir;
+
 yargs(hideBin(process.argv))
-  .scriptName("app-compose")
+  .scriptName("hosted-compose")
   .usage("$0 command")
   .command({
     command: "apps",
@@ -25,6 +32,11 @@ yargs(hideBin(process.argv))
     command: "ssh",
     description: "SSH integration",
     builder: (yargs) => sshCommand(yargs),
+  })
+  .command({
+    command: "scripts",
+    description: "SSH integration",
+    builder: (yargs) => scriptsCommand(yargs),
   })
   .option("verbose", {
     alias: "v",
