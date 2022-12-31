@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import inquirer from "inquirer";
 import os from "os";
 import SSHConfig from "ssh-config";
+import { readdir } from "fs/promises";
 
 export const toFilePath = (path, root = process.cwd()) => {
   if (!path) return;
@@ -90,3 +91,8 @@ export const logger = (verbose = false) => {
     if (verbose) console.log("[Logger]", ...args);
   };
 };
+
+export const getDirectories = async (root) =>
+  (await readdir(root, { withFileTypes: true }))
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);

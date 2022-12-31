@@ -5,14 +5,60 @@ import { getEnv, logger } from "../utils.js";
 export default function (parentCommand) {
   parentCommand
     .command(
+      "ls",
+      "list apps",
+      (yargs) => {
+        return yargs;
+      },
+      async (argv) => {
+        logger(argv.verbose)(argv);
+
+        const apps = new Apps(argv);
+        await apps.ls();
+      }
+    )
+    .command(
+      "all",
+      "run on all apps",
+      (yargs) => {
+        return yargs
+          .option("fn", {
+            alias: "function",
+            required: true,
+            description: "function to run",
+          })
+          .option("args", {
+            type: "array",
+            default: [],
+            description: "function args",
+          });
+      },
+      async (argv) => {
+        const { verbose, commandOptions, fn, args, composeOptions } = argv;
+        logger(verbose)(argv);
+
+        const apps = new Apps(argv);
+        const folders = await apps.ls();
+        for (const appName of folders) {
+          await apps.runCompose(
+            {
+              name: appName,
+              fn,
+              args,
+            },
+            {
+              commandOptions,
+              composeOptions,
+            }
+          );
+        }
+      }
+    )
+    .command(
       "logs",
       "stop containers",
       (yargs) => {
         return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
           .option("services", {
             type: "array",
             description: "services names",
@@ -42,15 +88,10 @@ export default function (parentCommand) {
       "ps",
       "list containers",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -72,15 +113,10 @@ export default function (parentCommand) {
       "down",
       "stop containers",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -102,15 +138,10 @@ export default function (parentCommand) {
       "up",
       "start containers",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -132,16 +163,10 @@ export default function (parentCommand) {
       "restart",
       "restart app",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -154,6 +179,7 @@ export default function (parentCommand) {
             args: [],
           },
           {
+            composeOptions: argv.composeOptions,
             commandOptions: argv.commandOptions,
           }
         );
@@ -164,10 +190,7 @@ export default function (parentCommand) {
       "run command",
       (yargs) => {
         return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
+
           .option("service", {
             description: "service name",
             required: true,
@@ -201,15 +224,10 @@ export default function (parentCommand) {
       "stop",
       "stop app",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -232,10 +250,7 @@ export default function (parentCommand) {
       "manage apps",
       (yargs) => {
         return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
+
           .option("name", {
             description: "app name",
             required: true,
@@ -269,15 +284,10 @@ export default function (parentCommand) {
       "list",
       "list services",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -300,15 +310,10 @@ export default function (parentCommand) {
       "pull",
       "pull app images",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -331,15 +336,10 @@ export default function (parentCommand) {
       "upgrade",
       "upgrade app",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -371,15 +371,10 @@ export default function (parentCommand) {
       "remove",
       "remove app",
       (yargs) => {
-        return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
-          .option("name", {
-            description: "app name",
-            required: true,
-          });
+        return yargs.option("name", {
+          description: "app name",
+          required: true,
+        });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
@@ -393,10 +388,6 @@ export default function (parentCommand) {
       "create app",
       (yargs) => {
         return yargs
-          .option("rootDir", {
-            default: process.cwd(),
-            description: "apps root directory",
-          })
           .option("configType", {
             default: "yaml",
             description: "yaml/yml/json",
@@ -428,10 +419,20 @@ export default function (parentCommand) {
         });
       }
     )
+    .option("rootDir", {
+      default: process.cwd(),
+      description: "apps root directory",
+    })
     .option("commandOptions", {
-      alias: "co",
+      alias: "com",
       type: "array",
       default: [],
       description: "compose command options",
+    })
+    .option("composeOptions", {
+      alias: "comp",
+      type: "array",
+      default: [],
+      description: "compose options",
     });
 }

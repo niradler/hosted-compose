@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import Path from "path";
 import YAML from "yaml";
 import compose from "docker-compose";
-import { toFilePath, fileExists, logger } from "../utils.js";
+import { toFilePath, fileExists, logger, getDirectories } from "../utils.js";
 
 export class Apps {
   constructor({ rootDir, verbose }) {
@@ -22,6 +22,14 @@ export class Apps {
       default:
         throw new Error("Unsupported config type");
     }
+  }
+
+  async ls() {
+    const appDir = this.appPath("");
+    const folders = await getDirectories(appDir);
+    console.log(folders);
+
+    return folders;
   }
 
   execCompose(fn, args = [], options) {
