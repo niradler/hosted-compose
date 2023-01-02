@@ -1,7 +1,7 @@
 {
   "name": "hosted-compose",
   "version": "0.0.13",
-  "description": "easy way to manage your self hosted server base on docker, docker-compose and others.",
+  "description": "hosted-compose is a command-line tool for managing common server tasks, using Docker Compose applications and Docker on remote and local hosts.",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -12,7 +12,12 @@
     "release": "git add . && git commit -am \"Release\" && npm version patch && npm publish && git push --tags",
     "zx": "zx"
   },
-  "keywords": [],
+  "keywords": [
+    "docker",
+    "docker-compose",
+    "self-hosted",
+    "command-line-tool"
+  ],
   "author": "Nir Adler",
   "license": "MIT",
   "dependencies": {

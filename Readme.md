@@ -1,6 +1,6 @@
 # hosted-compose
 
-hosted-compose is a command-line tool for managing Docker Compose applications and Docker on remote or local server.
+hosted-compose is a command-line tool for managing common server tasks, using Docker Compose applications and Docker on remote and local hosts.
 
 ## Features
 
