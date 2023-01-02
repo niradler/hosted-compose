@@ -24,7 +24,7 @@ const connect = async (argv) => {
 };
 
 export default function (parentCommand) {
-  parentCommand
+  return parentCommand
     .command(
       "getDirectory",
       "copy folder from destination",

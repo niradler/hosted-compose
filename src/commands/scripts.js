@@ -3,7 +3,7 @@ import Path from "path";
 import { logger } from "../utils.js";
 
 export default function (parentCommand) {
-  parentCommand.command(
+  return parentCommand.command(
     "run",
     "run zx script file",
     (yargs) => {

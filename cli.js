@@ -21,22 +21,26 @@ yargs(hideBin(process.argv))
   .command({
     command: "apps",
     description: "Manage docker compose apps",
-    builder: (yargs) => appsCommand(yargs),
+    builder: (yargs) => appsCommand(yargs).demandCommand(1)
+      .strict(),
   })
   .command({
     command: "docker",
     description: "Manage docker",
-    builder: (yargs) => dockerCommand(yargs),
+    builder: (yargs) => dockerCommand(yargs).demandCommand(1)
+      .strict(),
   })
   .command({
     command: "ssh",
     description: "SSH integration",
-    builder: (yargs) => sshCommand(yargs),
+    builder: (yargs) => sshCommand(yargs).demandCommand(1)
+      .strict(),
   })
   .command({
     command: "scripts",
     description: "SSH integration",
-    builder: (yargs) => scriptsCommand(yargs),
+    builder: (yargs) => scriptsCommand(yargs).demandCommand(1)
+      .strict(),
   })
   .option("verbose", {
     alias: "v",

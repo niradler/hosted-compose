@@ -3,7 +3,7 @@ import Apps from "../lib/apps.js";
 import { getEnv, logger } from "../utils.js";
 
 export default function (parentCommand) {
-  parentCommand
+  return parentCommand
     .command(
       "ls",
       "list apps",
@@ -15,6 +15,43 @@ export default function (parentCommand) {
 
         const apps = new Apps(argv);
         await apps.ls();
+      }
+    )
+    .command(
+      "sdk",
+      "run docker-compose sdk command, see github.com/PDMLab/docker-compose",
+      (yargs) => {
+        return yargs
+          .option("fn", {
+            alias: "function",
+            required: true,
+            description: "function to run",
+          })
+          .option("args", {
+            type: "array",
+            default: [],
+            description: "function args",
+          }).option("name", {
+            description: "app name",
+            required: true,
+          });
+      },
+      async (argv) => {
+        const { verbose, commandOptions, fn, args, composeOptions, name } = argv;
+        logger(verbose)(argv);
+
+        const apps = new Apps(argv);
+        await apps.runCompose(
+          {
+            name,
+            fn,
+            args,
+          },
+          {
+            commandOptions,
+            composeOptions,
+          }
+        );
       }
     )
     .command(
@@ -56,29 +93,49 @@ export default function (parentCommand) {
     )
     .command(
       "logs",
-      "stop containers",
+      "containers logs",
       (yargs) => {
         return yargs
           .option("services", {
             type: "array",
             description: "services names",
           })
-          .option("name", {
+          .option("follow", {
+            alias: "f",
+            description: "stream logs",
+            type: "boolean",
+            default: false
+          }).option("name", {
             description: "app name",
             required: true,
           });
       },
       async (argv) => {
         logger(argv.verbose)(argv);
-
         const apps = new Apps(argv);
+        let { services, follow } = argv
+        if (!services) {
+          const { data } = await apps.runCompose(
+            {
+              name: argv.name,
+              fn: "configServices",
+              args: [],
+            },
+            {
+              log: false,
+              commandOptions: argv.commandOptions,
+            }
+          );
+          services = data.services
+        }
         await apps.runCompose(
           {
             name: argv.name,
             fn: "logs",
-            args: [],
+            args: [services],
           },
           {
+            follow,
             commandOptions: argv.commandOptions,
           }
         );
@@ -187,10 +244,9 @@ export default function (parentCommand) {
     )
     .command(
       "run",
-      "run command",
+      "run command in a service",
       (yargs) => {
         return yargs
-
           .option("service", {
             description: "service name",
             required: true,
@@ -247,10 +303,9 @@ export default function (parentCommand) {
     )
     .command(
       "exec",
-      "manage apps",
+      "exec command in app service",
       (yargs) => {
         return yargs
-
           .option("name", {
             description: "app name",
             required: true,

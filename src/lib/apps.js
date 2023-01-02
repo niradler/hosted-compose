@@ -51,10 +51,10 @@ export class Apps {
   async runCompose({ name, fn, args }, options = {}) {
     this.logger("runCompose", { name, fn, args }, options);
     const appDir = this.appPath(name);
-    await this.execCompose(fn, args, {
+    return await this.execCompose(fn, args, {
+      log: true,
       ...options,
       cwd: appDir,
-      log: true,
     });
   }
 
