@@ -1,12 +1,19 @@
-# lib
-
-apps management, using docker-compose package, docker-compose cli installed is needed.
-
-ssh action, the key should be ed25519 SSH key
+# Scripts
 
 ```sh
-ssh-keygen -t ed25519
+hosted-compose scripts
+
+SSH integration
+
+Commands:
+  hosted-compose scripts run  run zx script file
+
+Options:
+      --help     Show help                                             [boolean]
+      --version  Show version number                                   [boolean]
+  -v, --verbose  Run with verbose logging                              [boolean]
 ```
 
-id_ed25519.pub file should be added to .ssh/authorized_keys on the server side.
-id_ed25519 is your private key to connect to the server should be store on the client side.
+Base on [zx](https://github.com/google/zx)
+
+`hosted-compose scripts run --eval "echo('my test')"`

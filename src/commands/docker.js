@@ -133,6 +133,6 @@ export default function (parentCommand) {
     })
     .option("config", {
       default: ".ssh/config",
-      description: "use config file to pull configuration (~/.ssh/config)",
+      description: "use ssh config file to pull configuration (~/.ssh/config)",
     });
 }

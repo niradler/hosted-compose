@@ -47,3 +47,5 @@ for the complete command list:
 ```sh
 hosted-compose --help
 ```
+
+_visit the docs folder for more information_
