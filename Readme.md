@@ -1,17 +1,23 @@
 # hosted-compose
 
-easy way to manage your self hosted server
+hosted-compose is a command-line tool for managing Docker Compose applications and Docker on remote or local server.
 
-- docker management (local/remote)
-- docker-compose (apps) (local/remote)
-- ssh utils
-- zx scripts
+## Features
 
-## Usage
+- Manage Docker Compose applications with the apps command
+- Manage Docker with the docker command
+- SSH integration with the ssh command
+- Custom script integration with the scripts command
+
+### Installation
 
 ```sh
 npm i -g hosted-compose
 ```
+
+To get started, you can view the available commands by running: `hosted-compose --help`
+
+### Usage
 
 create your first app:
 
@@ -40,12 +46,6 @@ remove app:
 
 ```sh
 hosted-compose apps remove --name mongo --root-dir ./apps
-```
-
-for the complete command list:
-
-```sh
-hosted-compose --help
 ```
 
 _visit the docs folder for more information_
