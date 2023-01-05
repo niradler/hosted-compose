@@ -1,6 +1,6 @@
 {
   "name": "hosted-compose",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "hosted-compose is a command-line tool for managing common server tasks, using Docker Compose applications and Docker on remote and local hosts.",
   "type": "module",
   "main": "index.js",
