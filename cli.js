@@ -10,6 +10,7 @@ import dockerCommand from "./src/commands/docker.js";
 import scriptsCommand from "./src/commands/scripts.js";
 import * as dotenv from "dotenv";
 import fs from 'fs-extra';
+
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
