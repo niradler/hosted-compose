@@ -44,4 +44,5 @@ Base on docker-compose cli, required to be installed.
 - create .env file with environment variables if supplied
 - run docker-compose up
 
+_open editor prompt in custom editor EDITOR=nano hosted-compose apps create --name mongo_
 _to run on remote host, use docker context_

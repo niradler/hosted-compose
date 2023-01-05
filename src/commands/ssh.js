@@ -1,30 +1,61 @@
-import fs from "fs/promises";
-import { NodeSSH } from "node-ssh";
-import { toFilePath, sshConfiguration, logger } from "../utils.js";
+import SSH from "../lib/ssh.js"
+import { logger } from "../utils.js";
 
-const ssh = new NodeSSH();
-
-const connect = async (argv) => {
-  const config = await sshConfiguration(argv);
-  logger(argv.verbose)(config);
-  let { privateKeyPath, port, host, username, password, passphrase } = config;
-  let privateKey;
-  if (privateKeyPath) {
-    privateKey = await fs.readFile(toFilePath(privateKeyPath), "ascii");
-  }
-  await ssh.connect({
-    port,
-    host,
-    username,
-    privateKey,
-    password,
-    passphrase,
-  });
-  logger(argv.verbose)("connected");
-};
 
 export default function (parentCommand) {
   return parentCommand
+    .command(
+      "forwardOut",
+      "Forward local connections to port on the server",
+      (yargs) => {
+        return yargs
+          .option("localPort", {
+            alias: "lp",
+            description: "local port",
+          })
+          .option("remotePort", {
+            alias: "rp",
+            description: "destination port",
+          });
+      },
+      async (argv) => {
+        logger(argv.verbose)(argv);
+        try {
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          ssh.forwardOut(argv)
+        } catch (error) {
+          console.error("ERROR:", error.message);
+          process.exit(1);
+        }
+      }
+    )
+    .command(
+      "forwardIn",
+      "Forward local connections to port on the server",
+      (yargs) => {
+        return yargs
+          .option("localPort", {
+            alias: "lp",
+            description: "local port",
+          })
+          .option("remotePort", {
+            alias: "rp",
+            description: "destination port",
+          });
+      },
+      async (argv) => {
+        logger(argv.verbose)(argv);
+        try {
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          ssh.forwardIn(argv)
+        } catch (error) {
+          console.error("ERROR:", error.message);
+          process.exit(1);
+        }
+      }
+    )
     .command(
       "getDirectory",
       "copy folder from destination",
@@ -42,8 +73,9 @@ export default function (parentCommand) {
       async (argv) => {
         logger(argv.verbose)(argv);
         try {
-          await connect(argv);
-          const completed = await ssh.getDirectory(
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          const completed = await ssh.nodeSSH.getDirectory(
             argv.localPath,
             argv.remotePath
           );
@@ -72,8 +104,9 @@ export default function (parentCommand) {
       async (argv) => {
         logger(argv.verbose)(argv);
         try {
-          await connect(argv);
-          const completed = await ssh.putDirectory(
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          const completed = await ssh.nodeSSH.putDirectory(
             argv.localPath,
             argv.remotePath
           );
@@ -102,8 +135,9 @@ export default function (parentCommand) {
       async (argv) => {
         logger(argv.verbose)(argv);
         try {
-          await connect(argv);
-          await ssh.getFile(argv.localFilePath, argv.remoteFilePath);
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          await ssh.nodeSSH.getFile(argv.localFilePath, argv.remoteFilePath);
           process.exit(0);
         } catch (error) {
           console.error("ERROR:", error.message);
@@ -128,8 +162,9 @@ export default function (parentCommand) {
       async (argv) => {
         logger(argv.verbose)(argv);
         try {
-          await connect(argv);
-          await ssh.putFiles([
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          await ssh.nodeSSH.putFiles([
             { local: argv.localFilePath, remote: argv.remoteFilePath },
           ]);
           process.exit(0);
@@ -150,13 +185,15 @@ export default function (parentCommand) {
       async (argv) => {
         logger(argv.verbose)(argv);
         try {
-          await connect(argv);
-          const result = await ssh.execCommand(argv.cmd, {});
+          const ssh = new SSH(argv)
+          await ssh.connect();
+          const result = await ssh.nodeSSH.execCommand(argv.cmd, {});
           if (result.stdout) console.log(result.stdout);
           if (result.stderr) console.log(result.stderr);
           process.exit(0);
         } catch (error) {
           console.error("ERROR:", error.message);
+          logger(argv.verbose)(error.stack);
           process.exit(1);
         }
       }
