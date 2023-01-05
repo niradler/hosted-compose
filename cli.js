@@ -27,7 +27,7 @@ yargs(hideBin(process.argv))
 
     },
     async () => {
-      const packageJson = await fs.readJson('./package.json')
+      const packageJson = await fs.readJson(Path.join(__basedir, 'package.json'))
       console.log(packageJson.version)
     }
   )
