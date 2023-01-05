@@ -9,7 +9,7 @@ import sshCommand from "./src/commands/ssh.js";
 import dockerCommand from "./src/commands/docker.js";
 import scriptsCommand from "./src/commands/scripts.js";
 import * as dotenv from "dotenv";
-
+import fs from 'fs-extra';
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,6 +18,18 @@ global.__basedir = Path.parse(__filename).dir;
 yargs(hideBin(process.argv))
   .scriptName("hosted-compose")
   .usage("$0 command")
+  .command(
+    "version",
+    "show version",
+    (yargs) => {
+      return yargs
+
+    },
+    async () => {
+      const packageJson = await fs.readJson('./package.json')
+      console.log(packageJson.version)
+    }
+  )
   .command({
     command: "apps",
     description: "Manage docker compose apps",
