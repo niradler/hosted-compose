@@ -6,6 +6,8 @@ hosted-compose ssh
 SSH integration
 
 Commands:
+  hosted-compose ssh forwardOut    Forward remote port on the server to local port
+  hosted-compose ssh forwardIn     Forward local connections to port on the server
   hosted-compose ssh getDirectory  copy folder from destination
   hosted-compose ssh putDirectory  copy folder to destination
   hosted-compose ssh getFile       copy file from destination

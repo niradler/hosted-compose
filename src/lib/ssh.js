@@ -36,7 +36,7 @@ export class SSH {
         net.createServer(function (sock) {
             conn.forwardOut(host, localPort, '127.0.0.1', remotePort, function (err, stream) {
                 if (err) throw err;
-
+                console.log(`Listening for connections on port 127.0.0.1:${remotePort}`)
                 sock.on('data', function (data) {
                     if (stream.write(data) === false) {
                         sock.pause();

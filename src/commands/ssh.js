@@ -6,7 +6,7 @@ export default function (parentCommand) {
   return parentCommand
     .command(
       "forwardOut",
-      "Forward local connections to port on the server",
+      "Forward remote port on the server to local port",
       (yargs) => {
         return yargs
           .option("localPort", {
